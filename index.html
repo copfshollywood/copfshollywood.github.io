@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start the Music 💜 | Valentine's Day</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Additional styles for index.html */
+        body {
+            font-family: 'Arial Rounded MT Bold', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Music Gate Page */
+        .music-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .gate-content {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Decorative Hearts */
+        .gate-hearts {
+            position: relative;
+            height: 100px;
+            margin-bottom: 30px;
+        }
+
+        .gate-heart {
+            position: absolute;
+            font-size: 2.5rem;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .floating {
+            animation: float 3s infinite ease-in-out;
+        }
+
+        .delayed-1 { animation-delay: 0.5s; left: 10%; }
+        .delayed-2 { animation-delay: 1s; left: 30%; }
+        .delayed-3 { animation-delay: 1.5s; left: 50%; transform: translateX(-50%); }
+        .delayed-4 { animation-delay: 2s; left: 70%; }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0) rotate(0deg); 
+            }
+            50% { 
+                transform: translateY(-20px) rotate(10deg); 
+            }
+        }
+
+        /* Gate Text */
+        .gate-title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .gate-subtitle {
+            color: #ba68c8;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* Instruction Box */
+        .instruction-box {
+            background: rgba(156, 39, 176, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(156, 39, 176, 0.3);
+        }
+
+        .instruction {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .instruction:last-child {
+            margin-bottom: 0;
+        }
+
+        .instruction i {
+            color: #9c27b0;
+            font-size: 1.2rem;
+            min-width: 24px;
+        }
+
+        .pulse-instruction {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .click-to-continue {
+            margin-top: 15px;
+            color: #ba68c8;
+            font-size: 0.9rem;
+            animation: fadeInOut 2s infinite;
+            font-style: italic;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* Music Player Container */
+        .music-player-container {
+            margin-bottom: 30px;
+        }
+
+        .player-wrapper {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Buttons */
+        .manual-continue-btn {
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 0 auto 15px;
+            transition: all 0.3s;
+            font-weight: bold;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .manual-continue-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(156, 39, 176, 0.4);
+        }
+
+        /* Notes */
+        .player-note {
+            color: #ba68c8;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .player-note i {
+            color: #9c27b0;
+        }
+
+        /* Loading Indicator */
+        .loading-indicator {
+            margin-top: 30px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .loading-indicator.visible {
+            opacity: 1;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(156, 39, 176, 0.3);
+            border-top: 3px solid #9c27b0;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Animation */
+        .success-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .success-animation.visible {
+            opacity: 1;
+        }
+
+        .success-heart {
+            font-size: 4rem;
+            color: #9c27b0;
+            margin-bottom: 20px;
+            animation: pulse 0.5s ease-in-out 3;
+        }
+
+        .success-text {
+            color: white;
+            font-size: 2rem;
+            text-align: center;
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .gate-content {
+                padding: 10px;
+            }
+            
+            .gate-title {
+                font-size: 2rem;
+            }
+            
+            .gate-subtitle {
+                font-size: 1rem;
+            }
+            
+            .instruction {
+                font-size: 0.9rem;
+            }
+            
+            .gate-heart {
+                font-size: 2rem;
+            }
+            
+            .player-wrapper {
+                padding: 15px;
+            }
+            
+            .manual-continue-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            
+            .success-text {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gate-title {
+                font-size: 1.8rem;
+            }
+            
+            .gate-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .instruction-box {
+                padding: 15px;
+            }
+            
+            .instruction {
+                font-size: 0.85rem;
+                gap: 8px;
+            }
+            
+            .gate-heart {
+                font-size: 1.8rem;
+            }
+            
+            .success-text {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Music Gate Page -->
+    <div class="music-gate" id="musicGate">
+        <div class="gate-content">
+            <!-- Decorative hearts -->
+            <div class="gate-hearts">
+                <div class="gate-heart floating">💜</div>
+                <div class="gate-heart floating delayed-1">💖</div>
+                <div class="gate-heart floating delayed-2">💗</div>
+                <div class="gate-heart floating delayed-3">💘</div>
+                <div class="gate-heart floating delayed-4">💝</div>
+            </div>
+            
+            <h1 class="gate-title">Start the Romance 💕</h1>
+            <p class="gate-subtitle">Click play on the music player below to begin your Valentine's journey</p>
+            
+            <!-- Important Instructions -->
+            <div class="instruction-box">
+                <div class="instruction">
+                    <i class="fas fa-hand-pointer pulse-instruction"></i>
+                    <span><strong>Click play</strong> on the music player below</span>
+                </div>
+                <div class="instruction">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <span>Or <strong>click anywhere</strong> on the page to continue</span>
+                </div>
+                <p class="click-to-continue">
+                    <i class="fas fa-info-circle"></i>
+                    Click the button below if the website doesn't appear automatically
+                </p>
+            </div>
+            
+            <!-- Music Player -->
+            <div class="music-player-container">
+                <div class="player-wrapper">
+                    <iframe 
+                        id="spotifyPlayer"
+                        src="https://open.spotify.com/embed/playlist/4YmC0WlQ316I5sZ5FiZKef?utm_source=generator"
+                        width="100%" 
+                        height="380" 
+                        frameborder="0" 
+                        allowfullscreen="" 
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                        loading="lazy"
+                        style="border-radius: 12px;">
+                    </iframe>
+                </div>
+                
+                <!-- Manual Continue Button -->
+                <button class="manual-continue-btn" id="manualContinueBtn">
+                    <i class="fas fa-forward"></i>
+                    Continue to Valentine's Website
+                </button>
+                
+                <p class="player-note">
+                    <i class="fas fa-info-circle"></i>
+                    The website will appear after you click play or use the button above
+                </p>
+            </div>
+            
+            <!-- Loading Indicator -->
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="loading-spinner"></div>
+                <p>Ready for your Valentine's surprise...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Music Gate Script - ALWAYS shows first
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎵 Music gate initialized - Showing first');
+            
+            // Clear any previous session data
+            localStorage.removeItem('valentineMusicTimestamp');
+            
+            // DOM Elements
+            const elements = {
+                musicGate: document.getElementById('musicGate'),
+                spotifyPlayer: document.getElementById('spotifyPlayer'),
+                manualContinueBtn: document.getElementById('manualContinueBtn'),
+                loadingIndicator: document.getElementById('loadingIndicator')
+            };
+            
+            // State
+            let musicStarted = false;
+            let interactionDetected = false;
+            
+            // Initialize
+            function initialize() {
+                console.log('Starting fresh music gate session');
+                
+                // Show loading indicator after a moment
+                setTimeout(() => {
+                    elements.loadingIndicator.classList.add('visible');
+                }, 1000);
+                
+                // Manual continue button - PRIMARY WAY TO PROCEED
+                elements.manualContinueBtn.addEventListener('click', function() {
+                    console.log('User clicked manual continue button');
+                    proceedToMainWebsite();
+                });
+                
+                // Listen for clicks anywhere on the gate
+                elements.musicGate.addEventListener('click', function(e) {
+                    // Don't trigger if clicking the iframe or its container
+                    if (!e.target.closest('.player-wrapper') && 
+                        !e.target.closest('.manual-continue-btn')) {
+                        console.log('User clicked on gate background');
+                        proceedToMainWebsite();
+                    }
+                });
+                
+                // Listen for touches
+                elements.musicGate.addEventListener('touchstart', function(e) {
+                    if (!e.target.closest('.player-wrapper') && 
+                        !e.target.closest('.manual-continue-btn')) {
+                        console.log('User touched gate background');
+                        proceedToMainWebsite();
+                    }
+                });
+                
+                // Listen for keypress (accessibility)
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        console.log('User pressed key to continue');
+                        proceedToMainWebsite();
+                    }
+                });
+                
+                // Auto-proceed after 30 seconds if no interaction
+                setTimeout(function() {
+                    if (!musicStarted && !interactionDetected) {
+                        console.log('Auto-proceeding after timeout');
+                        proceedToMainWebsite();
+                    }
+                }, 30000);
+            }
+            
+            function proceedToMainWebsite() {
+                if (musicStarted) return;
+                
+                musicStarted = true;
+                interactionDetected = true;
+                console.log('🎶 Proceeding to main website');
+                
+                // Show success animation
+                showSuccessAnimation();
+                
+                // Wait for animation, then redirect
+                setTimeout(function() {
+                    // Store current timestamp
+                    const timestamp = Date.now().toString();
+                    localStorage.setItem('valentineMusicTimestamp', timestamp);
+                    console.log('Stored timestamp:', timestamp);
+                    
+                    // Redirect to main website with a flag in the URL
+                    window.location.href = 'main.html?music=started&t=' + timestamp;
+                }, 1500);
+            }
+            
+            function showSuccessAnimation() {
+                // Create success animation overlay
+                const successOverlay = document.createElement('div');
+                successOverlay.className = 'success-animation';
+                successOverlay.innerHTML = `
+                    <div class="success-heart">💜</div>
+                    <div class="success-text">Starting Your Valentine's Journey...</div>
+                `;
+                
+                document.body.appendChild(successOverlay);
+                
+                // Show animation
+                setTimeout(() => {
+                    successOverlay.classList.add('visible');
+                }, 10);
+            }
+            
+            // Start everything - ALWAYS show gate first
+            initialize();
+        });
+    </script>
+</body>
+</html>
