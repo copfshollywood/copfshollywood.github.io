@@ -6,7 +6,6 @@
     <title>Start the Music 💜 | Valentine's Day</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* All the same styles as before, just updating the script */
         * {
             margin: 0;
             padding: 0;
@@ -138,19 +137,6 @@
             50% { transform: scale(1.1); }
         }
 
-        .click-to-continue {
-            margin-top: 15px;
-            color: #ba68c8;
-            font-size: 0.9rem;
-            animation: fadeInOut 2s infinite;
-            font-style: italic;
-        }
-
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
         /* Music Player Container */
         .music-player-container {
             margin-bottom: 30px;
@@ -165,7 +151,7 @@
         }
 
         /* Buttons */
-        .manual-continue-btn {
+        .continue-btn {
             background: linear-gradient(45deg, #9c27b0, #e91e63);
             color: white;
             border: none;
@@ -184,23 +170,9 @@
             max-width: 400px;
         }
 
-        .manual-continue-btn:hover {
+        .continue-btn:hover {
             transform: scale(1.05);
             box-shadow: 0 5px 20px rgba(156, 39, 176, 0.4);
-        }
-
-        /* Notes */
-        .player-note {
-            color: #ba68c8;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .player-note i {
-            color: #9c27b0;
         }
 
         /* Loading Indicator */
@@ -268,25 +240,6 @@
             color: transparent;
         }
 
-        /* New: Music Player Kept Open Note */
-        .music-continues-note {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(29, 185, 84, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(29, 185, 84, 0.3);
-            color: #1DB954;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .music-continues-note i {
-            color: #1DB954;
-        }
-
         /* Responsive Design */
         @media (max-width: 768px) {
             .gate-content {
@@ -313,7 +266,7 @@
                 padding: 15px;
             }
             
-            .manual-continue-btn {
+            .continue-btn {
                 padding: 12px 20px;
                 font-size: 1rem;
             }
@@ -365,22 +318,18 @@
             </div>
             
             <h1 class="gate-title">Start the Romance 💕</h1>
-            <p class="gate-subtitle">Click play on the music player below to begin your Valentine's journey</p>
+            <p class="gate-subtitle">Click play on the music player below to begin</p>
             
-            <!-- Important Instructions -->
+            <!-- Simple Instructions -->
             <div class="instruction-box">
                 <div class="instruction">
                     <i class="fas fa-hand-pointer pulse-instruction"></i>
-                    <span><strong>Click play</strong> on the music player below</span>
+                    <span>Click play on the music player</span>
                 </div>
                 <div class="instruction">
-                    <i class="fas fa-external-link-alt"></i>
-                    <span>Then click the button to <strong>open Valentine's website in new tab</strong></span>
+                    <i class="fas fa-forward"></i>
+                    <span>Then click continue to begin</span>
                 </div>
-                <p class="click-to-continue">
-                    <i class="fas fa-info-circle"></i>
-                    Music will continue playing in this tab while you explore the website
-                </p>
             </div>
             
             <!-- Music Player -->
@@ -399,92 +348,74 @@
                     </iframe>
                 </div>
                 
-                <!-- Manual Continue Button -->
-                <button class="manual-continue-btn" id="manualContinueBtn">
-                    <i class="fas fa-external-link-alt"></i>
-                    Open Valentine's Website in New Tab
+                <!-- Continue Button -->
+                <button class="continue-btn" id="continueBtn">
+                    <i class="fas fa-heart"></i>
+                    Continue to Valentine's Website
                 </button>
-                
-                <div class="music-continues-note">
-                    <i class="fab fa-spotify"></i>
-                    <span>Music will keep playing in this tab after opening the website</span>
-                </div>
-                
-                <p class="player-note">
-                    <i class="fas fa-info-circle"></i>
-                    Don't close this tab! Music will stop if you close it.
-                </p>
             </div>
             
             <!-- Loading Indicator -->
             <div class="loading-indicator" id="loadingIndicator">
                 <div class="loading-spinner"></div>
-                <p>Ready for your Valentine's surprise...</p>
+                <p>Loading your special experience...</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Music Gate Script - Opens main site in NEW TAB
+        // Music Gate Script - Simple and clean
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎵 Music gate initialized - Will open main site in new tab');
-            
-            // Clear any previous session data
-            localStorage.removeItem('valentineMusicTimestamp');
+            console.log('🎵 Music gate initialized');
             
             // DOM Elements
             const elements = {
                 musicGate: document.getElementById('musicGate'),
-                spotifyPlayer: document.getElementById('spotifyPlayer'),
-                manualContinueBtn: document.getElementById('manualContinueBtn'),
+                continueBtn: document.getElementById('continueBtn'),
                 loadingIndicator: document.getElementById('loadingIndicator')
             };
             
             // State
-            let musicStarted = false;
-            let interactionDetected = false;
+            let websiteOpened = false;
             
             // Initialize
             function initialize() {
-                console.log('Starting fresh music gate session');
+                console.log('Starting music gate');
                 
                 // Show loading indicator after a moment
                 setTimeout(() => {
                     elements.loadingIndicator.classList.add('visible');
                 }, 1000);
                 
-                // Manual continue button - OPENS IN NEW TAB
-                elements.manualContinueBtn.addEventListener('click', function() {
-                    console.log('User clicked to open website in new tab');
-                    openMainWebsiteInNewTab();
+                // Continue button - Opens main site in new tab
+                elements.continueBtn.addEventListener('click', function() {
+                    console.log('Opening Valentine website in new tab');
+                    openValentineWebsite();
                 });
                 
-                // Also allow clicking anywhere on the gate to open in new tab
+                // Also allow clicking anywhere on the gate
                 elements.musicGate.addEventListener('click', function(e) {
-                    // Don't trigger if clicking the iframe or its container
                     if (!e.target.closest('.player-wrapper') && 
-                        !e.target.closest('.manual-continue-btn') &&
-                        !e.target.closest('.music-continues-note')) {
-                        console.log('User clicked on gate background');
-                        openMainWebsiteInNewTab();
+                        !e.target.closest('.continue-btn')) {
+                        console.log('Opening from background click');
+                        openValentineWebsite();
                     }
                 });
                 
-                // Listen for keypress (accessibility)
-                document.addEventListener('keydown', function(e) {
-                    if ((e.key === 'Enter' || e.key === ' ') && !musicStarted) {
-                        console.log('User pressed key to open website');
-                        openMainWebsiteInNewTab();
+                // Auto-open after 30 seconds if no interaction
+                setTimeout(function() {
+                    if (!websiteOpened) {
+                        console.log('Auto-opening after timeout');
+                        openValentineWebsite();
                     }
-                });
+                }, 30000);
             }
             
-            function openMainWebsiteInNewTab() {
-                if (musicStarted) return;
+            function openValentineWebsite() {
+                if (websiteOpened) return;
                 
-                musicStarted = true;
-                interactionDetected = true;
-                console.log('🎶 Opening main website in new tab');
+                websiteOpened = true;
+                console.log('💖 Opening Valentine website');
                 
                 // Show success animation
                 showSuccessAnimation();
@@ -493,42 +424,24 @@
                 setTimeout(function() {
                     // Generate unique timestamp
                     const timestamp = Date.now().toString();
-                    localStorage.setItem('valentineMusicTimestamp', timestamp);
-                    console.log('Stored timestamp:', timestamp);
                     
-                    // Create URL with parameters
-                    const mainSiteUrl = 'main.html?music=started&t=' + timestamp;
+                    // Create URL for main website
+                    const mainSiteUrl = 'main.html?t=' + timestamp;
                     
                     // OPEN IN NEW TAB/WINDOW
                     const newWindow = window.open(mainSiteUrl, '_blank');
                     
                     if (newWindow) {
-                        // Focus on the new tab (optional)
+                        // Focus on the new tab
                         newWindow.focus();
                         
-                        // Update button text to show success
-                        elements.manualContinueBtn.innerHTML = '<i class="fas fa-check"></i> Website Opened!';
-                        elements.manualContinueBtn.style.background = 'linear-gradient(45deg, #4CAF50, #2E7D32)';
-                        elements.manualContinueBtn.disabled = true;
-                        
-                        // Update instructions
-                        const instructions = document.querySelectorAll('.instruction');
-                        if (instructions[1]) {
-                            instructions[1].innerHTML = '<i class="fas fa-check-circle" style="color:#4CAF50"></i><span><strong>Success!</strong> Website opened in new tab</span>';
-                        }
-                        
-                        // Add message about keeping this tab open
-                        const keepOpenMsg = document.createElement('div');
-                        keepOpenMsg.className = 'music-continues-note';
-                        keepOpenMsg.style.marginTop = '10px';
-                        keepOpenMsg.style.animation = 'fadeInOut 2s infinite';
-                        keepOpenMsg.innerHTML = '<i class="fas fa-music"></i><span>Keep this tab open for continuous music!</span>';
-                        document.querySelector('.music-player-container').appendChild(keepOpenMsg);
+                        // Update button to show success
+                        elements.continueBtn.innerHTML = '<i class="fas fa-check"></i> Website Opened!';
+                        elements.continueBtn.style.background = 'linear-gradient(45deg, #4CAF50, #2E7D32)';
+                        elements.continueBtn.disabled = true;
                         
                     } else {
-                        // If popup blocked, show alert and fallback to same window
-                        alert('Popup blocked! Please allow popups for this site, or click the button again to open in same window.');
-                        // Fallback: open in same window
+                        // If popup blocked, fallback to same window
                         window.location.href = mainSiteUrl;
                     }
                 }, 1000);
@@ -540,7 +453,7 @@
                 successOverlay.className = 'success-animation';
                 successOverlay.innerHTML = `
                     <div class="success-heart">💜</div>
-                    <div class="success-text">Opening Valentine's Website...</div>
+                    <div class="success-text">Opening Your Valentine's Experience...</div>
                 `;
                 
                 document.body.appendChild(successOverlay);
