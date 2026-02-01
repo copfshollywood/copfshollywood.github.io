@@ -6,7 +6,7 @@
     <title>Will You Be My Valentine? 💜</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Main website styles */
+        /* All the same styles as before, just updating the validation script */
         * {
             margin: 0;
             padding: 0;
@@ -335,6 +335,50 @@
             box-shadow: 0 8px 20px rgba(156, 39, 176, 0.4);
         }
         
+        /* Back to Music Button */
+        .back-to-music-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #1DB954, #1ed760);
+            color: white;
+            border: 3px solid #1DB954;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(29, 185, 84, 0.3);
+            transition: all 0.3s;
+            z-index: 1000;
+            opacity: 1;
+        }
+        
+        .back-to-music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(29, 185, 84, 0.4);
+        }
+        
+        /* Music Status Indicator */
+        .music-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(29, 185, 84, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -364,12 +408,22 @@
                 font-size: 30px;
             }
             
-            .music-control-btn {
+            .music-control-btn, .back-to-music-btn {
                 width: 50px;
                 height: 50px;
                 font-size: 1.3rem;
                 bottom: 15px;
-                right: 15px;
+            }
+            
+            .back-to-music-btn {
+                left: 15px;
+            }
+            
+            .music-status {
+                top: 10px;
+                right: 10px;
+                font-size: 0.8rem;
+                padding: 8px 15px;
             }
         }
         
@@ -422,10 +476,20 @@
             .message p {
                 font-size: 1.2rem;
             }
+            
+            .music-status {
+                display: none; /* Hide on very small screens */
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Music Status Indicator -->
+    <div class="music-status" id="musicStatus">
+        <i class="fab fa-spotify"></i>
+        <span>Music playing in background tab</span>
+    </div>
+    
     <!-- Background hearts -->
     <div class="heart-bg" id="heartBackground"></div>
     
@@ -475,6 +539,10 @@
         <!-- Footer -->
         <footer>
             <p>Made with <i class="fas fa-heart"></i> for the most special person</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: #9c27b0;">
+                <i class="fab fa-spotify"></i>
+                Music continues playing in the background tab
+            </p>
         </footer>
     </div>
 
@@ -482,50 +550,54 @@
     <button class="music-control-btn" id="musicControlBtn" onclick="showMusicPlayer()">
         <i class="fas fa-music"></i>
     </button>
+    
+    <!-- Back to Music Button -->
+    <button class="back-to-music-btn" id="backToMusicBtn" onclick="goBackToMusic()" title="Go back to music player">
+        <i class="fab fa-spotify"></i>
+    </button>
 
     <script>
-        // Main website script
+        // Main website script - REMOVES VALIDATION FOR NEW TAB APPROACH
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('💜 Main Valentine website initialized');
+            console.log('💜 Main Valentine website initialized - Opened in new tab');
             
-            // Check URL parameters to ensure user came from music gate
+            // Since we're opening in a new tab, we don't need strict validation
+            // Just check if we have a timestamp
             const urlParams = new URLSearchParams(window.location.search);
-            const musicStarted = urlParams.get('music') === 'started';
-            const urlTimestamp = urlParams.get('t');
+            const timestamp = urlParams.get('t');
             
-            if (!musicStarted || !urlTimestamp) {
-                // User didn't come from music gate properly, redirect back
-                console.log('Invalid access, redirecting to music gate...');
-                window.location.href = 'index.html';
-                return;
+            if (!timestamp) {
+                // No timestamp, but we'll still allow access since it's a new tab
+                console.log('No timestamp found, but allowing access (new tab mode)');
+            } else {
+                // Store timestamp for session management
+                localStorage.setItem('valentineMusicTimestamp', timestamp);
+                console.log('Timestamp stored:', timestamp);
             }
             
-            // Check localStorage timestamp matches URL timestamp
-            const storedTimestamp = localStorage.getItem('valentineMusicTimestamp');
-            if (!storedTimestamp || storedTimestamp !== urlTimestamp) {
-                // Timestamp doesn't match or is missing, redirect back
-                console.log('Session validation failed, redirecting...');
-                localStorage.removeItem('valentineMusicTimestamp');
-                window.location.href = 'index.html';
-                return;
-            }
+            // Add tab close warning
+            window.addEventListener('beforeunload', function(e) {
+                // Only show warning if user hasn't interacted much
+                if (document.querySelector('.message.show')) {
+                    return; // Don't warn if they've already seen the celebration
+                }
+                e.returnValue = 'Are you sure? The music is playing in another tab.';
+                return e.returnValue;
+            });
             
-            // Check if timestamp is recent (within last 10 minutes)
-            const timeDiff = Date.now() - parseInt(urlTimestamp);
-            const minutesDiff = timeDiff / (1000 * 60);
-            
-            if (minutesDiff > 10) {
-                // Session expired (more than 10 minutes ago), redirect to music gate
-                console.log('Session expired, redirecting to music gate...');
-                localStorage.removeItem('valentineMusicTimestamp');
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            // VALID SESSION - Initialize main website
-            console.log('✅ Valid session, initializing main website');
+            // Initialize main website
             initializeMainWebsite();
         });
+        
+        function goBackToMusic() {
+            // Try to focus on the music tab
+            if (window.opener && !window.opener.closed) {
+                window.opener.focus();
+            } else {
+                // If opener is closed, open music page
+                window.open('index.html', '_blank');
+            }
+        }
         
         function initializeMainWebsite() {
             // DOM Elements
@@ -537,7 +609,8 @@
                 closeBtn: document.getElementById('closeBtn'),
                 resetBtn: document.getElementById('resetBtn'),
                 animals: document.querySelectorAll('.animal'),
-                heartBackground: document.getElementById('heartBackground')
+                heartBackground: document.getElementById('heartBackground'),
+                backToMusicBtn: document.getElementById('backToMusicBtn')
             };
             
             // State
@@ -830,7 +903,7 @@
             createBackgroundHearts();
             initializeNoButtonBehavior();
             
-            console.log('✅ Main website fully initialized');
+            console.log('✅ Main website fully initialized (new tab mode)');
         }
         
         // Music player modal
@@ -882,6 +955,10 @@
                     loading="lazy"
                     style="border-radius: 12px;">
                 </iframe>
+                <div style="margin-top: 15px; color: #b3b3b3; font-size: 0.9rem; text-align: center;">
+                    <i class="fas fa-info-circle"></i>
+                    The main music player is still open in another tab
+                </div>
             `;
             
             overlay.appendChild(modal);
